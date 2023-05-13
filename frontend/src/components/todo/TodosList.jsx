@@ -1,15 +1,35 @@
+import { useEffect, useState } from "react";
 import Navbar from "../NavbarComponent";
+import client from "../../axiosClient";
 
 const TodosList = () => {
-  const people = [
-    {
-      name: "Lindsay Walton",
-      title: "Front-end Developer",
-      email: "lindsay.walton@example.com",
-      role: "Member",
-    },
-    // More people...
-  ];
+  const [todos, setTodos] = useState([]);
+  const getTodos = async () => {
+    await client
+      .get()
+      .then((res) => {
+        console.log(res.data);
+        setTodos(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const deleteTodo = async (id) => {
+    await client
+      .delete(`${id}`)
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    getTodos();
+  }, []);
   return (
     <>
       <Navbar />
@@ -51,47 +71,50 @@ const TodosList = () => {
                       >
                         Title
                       </th>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      >
-                        Email
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      >
-                        Role
-                      </th>
+
                       <th
                         scope="col"
                         className="relative py-3.5 pl-3 pr-4 sm:pr-6"
                       >
                         <span className="sr-only">Edit</span>
                       </th>
+
+                      <th
+                        scope="col"
+                        className="relative py-3.5 pl-3 pr-4 sm:pr-6"
+                      >
+                        <span className="sr-only">Delete</span>
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
-                    {people.map((person) => (
-                      <tr key={person.email}>
+                    {todos.map((todo) => (
+                      <tr key={todo.id}>
                         <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                          {person.name}
+                          {todo.title}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {person.title}
+                          {todo.description}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {person.email}
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {person.role}
-                        </td>
+
                         <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                           <a
                             href="#"
                             className="text-indigo-600 hover:text-indigo-900"
                           >
-                            Edit<span className="sr-only">, {person.name}</span>
+                            Edit<span className="sr-only">, {todo.title}</span>
+                          </a>
+                        </td>
+
+                        <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                          <a
+                            onClick={() => {
+                              deleteTodo(todo.id);
+                            }}
+                            className="text-red-600 hover:text-red-900"
+                          >
+                            Delete
+                            <span className="sr-only">, {todo.title}</span>
                           </a>
                         </td>
                       </tr>
