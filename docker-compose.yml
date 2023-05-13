@@ -1,0 +1,69 @@
+version: "3"
+services:
+  backend: 
+    container_name: backend
+    build: 
+      context: ./backend
+      dockerfile: DockerFile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://psql-db:5432/todo_management
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=3ea14367A4
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    networks:
+      - spring
+    depends_on:
+      - psql-db
+
+  psql-db:
+    container_name: psql-db
+    image: "postgres:15"
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      PGPASSWORD: "3ea14367A4"
+      POSTGRES_DB: "todo_management"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "3ea14367A4"
+    volumes:
+      - postgres-db:/data/postgres
+    networks:
+      - spring
+    healthcheck:
+      test:
+          - CMD
+          - pg_isready
+          - "-q"
+          - "-d"
+          - "${DB_DATABASE}"
+          - "-U"
+          - "${DB_USERNAME}"
+      retries: 3
+      timeout: 5s
+    
+
+  frontend:
+    container_name: frontend
+    build: 
+      context: ./frontend
+      dockerfile: DockerFile
+    ports:
+      - "5473:5473"
+    volumes:
+      - ./frontend:app/frontend
+      - /app/frontend/node_modules
+    depends_on:
+      - backend
+    networks:
+      - spring
+
+networks:
+  spring:
+    driver: bridge
+
+volumes:
+  postgres-db:
+    driver: local
