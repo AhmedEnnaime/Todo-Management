@@ -10,7 +10,7 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://psql-db:5432/todo_management
       - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=3ea14367A4
+      - SPRING_DATASOURCE_PASSWORD=your-db-password
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     networks:
       - spring
@@ -24,26 +24,13 @@ services:
     ports:
       - "5432:5432"
     environment:
-      PGPASSWORD: "3ea14367A4"
       POSTGRES_DB: "todo_management"
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "3ea14367A4"
     volumes:
-      - postgres-db:/data/postgres
+      - postgres-db:/var/lib/postgresql/data
     networks:
       - spring
-    healthcheck:
-      test:
-          - CMD
-          - pg_isready
-          - "-q"
-          - "-d"
-          - "${DB_DATABASE}"
-          - "-U"
-          - "${DB_USERNAME}"
-      retries: 3
-      timeout: 5s
-    
 
   frontend:
     container_name: frontend
@@ -51,9 +38,9 @@ services:
       context: ./frontend
       dockerfile: DockerFile
     ports:
-      - "5473:5473"
+      - "5174:5174"
     volumes:
-      - ./frontend:app/frontend
+      - ${PWD}/frontend:/app/frontend
       - /app/frontend/node_modules
     depends_on:
       - backend
