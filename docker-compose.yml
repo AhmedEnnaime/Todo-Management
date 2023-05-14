@@ -10,7 +10,7 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://psql-db:5432/todo_management
       - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=your-db-password
+      - SPRING_DATASOURCE_PASSWORD=3ea14367A4
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     networks:
       - spring

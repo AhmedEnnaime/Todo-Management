@@ -1,6 +1,9 @@
 package com.spring.crud.api.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 //import lombok.Data;
 
 @Table(name = "todos")
@@ -14,6 +17,10 @@ public class Todo {
     private String title;
     @Column(nullable = true)
     private String description;
+    @ManyToOne
+    @JsonBackReference
+    @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id")
+    private User user;
 
     public Todo() {}
 
@@ -47,12 +54,21 @@ public class Todo {
         this.description = description;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public String toString() {
         return "Todo{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
+                ", user='" + user + '\'' +
                 '}';
     }
 }
