@@ -26,7 +26,7 @@ services:
     environment:
       POSTGRES_DB: "todo_management"
       POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "you_db_password"
+      POSTGRES_PASSWORD: "your_password"
     volumes:
       - postgres-db:/var/lib/postgresql/data
     networks:
